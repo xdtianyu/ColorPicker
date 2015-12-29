@@ -1,0 +1,17 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:tools="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="example_switch"
+        android:summary="@string/pref_description_social_recommendations"
+        android:title="@string/pref_title_social_recommendations"/>
+    <org.xdty.preference.ColorPreference
+        android:key="example_color"
+        android:title="Color"
+        android:summary="This is a color preference"
+        tools:dialogTitle="@string/default_color"
+        tools:colors="@array/default_rainbow"
+        tools:columns="5"
+        android:defaultValue="@color/flamingo"/>
+</PreferenceScreen>
