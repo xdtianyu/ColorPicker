@@ -8,13 +8,13 @@ ext {
     libraryName = 'ColorPicker'
     artifact = 'color-picker'
 
-    libraryDescription = ''
+    libraryDescription = 'An easy to use android color picker library.'
 
     siteUrl = 'https://github.com/xdtianyu/ColorPicker'
     gitUrl = 'https://github.com/xdtianyu/ColorPicker'
 
-    libraryVersionCode = 1
-    libraryVersion = '0.0.1'
+    libraryVersionCode = 2
+    libraryVersion = '0.0.2'
 
     developerId = 'xdtianyu'
     developerName = 'xdtianyu'
@@ -30,7 +30,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode = libraryVersionCode
         versionName = libraryVersion
