@@ -4,5 +4,6 @@
         <attr name="dialogTitle" format="string|reference" />
         <attr name="colors" format="reference" />
         <attr name="columns" format="integer" />
+        <attr name="material" format="boolean" />
     </declare-styleable>
 </resources>

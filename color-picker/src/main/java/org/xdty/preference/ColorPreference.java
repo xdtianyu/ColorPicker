@@ -2,6 +2,7 @@ package org.xdty.preference;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
@@ -14,6 +15,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.xdty.preference.colorpicker.ColorPickerDialog;
 import org.xdty.preference.colorpicker.ColorPickerSwatch;
@@ -32,6 +34,7 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
     private int mCurrentValue;
     private int[] mColors;
     private int mColumns;
+    private boolean mMaterial;
 
     private View mColorView;
 
@@ -50,7 +53,8 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
                 mTitle = a.getResourceId(R.styleable.ColorPreference_dialogTitle,
                         R.string.color_picker_default_title);
             }
-            mColumns = a.getInt(R.styleable.ColorPreference_columns, 2);
+            mColumns = a.getInt(R.styleable.ColorPreference_columns, 5);
+            mMaterial = a.getBoolean(R.styleable.ColorPreference_material, true);
         } finally {
             a.recycle();
         }
@@ -72,6 +76,23 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
         w.setVisibility(View.VISIBLE);
         w.addView(mColorView);
         return s;
+    }
+
+    @Override
+    protected void onBindView(View view) {
+        super.onBindView(view);
+        if (mMaterial) {
+            TextView textTitle = (TextView) view.findViewById(android.R.id.title);
+            TextView textSummary = (TextView) view.findViewById(android.R.id.summary);
+
+            textTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+            textSummary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            textTitle.setTextColor(getColor(android.R.attr.textColorPrimary));
+            textSummary.setTextColor(getColor(android.R.attr.textColorSecondary));
+
+            View parent = (View) textSummary.getParent().getParent();
+            parent.setPadding((int) dpToPx(16), 0, (int) dpToPx(16), 0);
+        }
     }
 
     @Override
@@ -173,6 +194,16 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
     private float dpToPx(float dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 getContext().getResources().getDisplayMetrics());
+    }
+
+    private int getColor(int attrId) {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = getContext().getTheme();
+        theme.resolveAttribute(attrId, typedValue, true);
+        TypedArray arr = getContext().obtainStyledAttributes(typedValue.data, new int[]{attrId});
+        int color = arr.getColor(0, -1);
+        arr.recycle();
+        return color;
     }
 
     private static class SavedState extends BaseSavedState {

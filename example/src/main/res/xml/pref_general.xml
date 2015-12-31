@@ -13,5 +13,6 @@
         tools:dialogTitle="@string/default_color"
         tools:colors="@array/default_rainbow"
         tools:columns="5"
+        tools:material="true"
         android:defaultValue="@color/flamingo"/>
 </PreferenceScreen>

@@ -13,8 +13,8 @@ ext {
     siteUrl = 'https://github.com/xdtianyu/ColorPicker'
     gitUrl = 'https://github.com/xdtianyu/ColorPicker'
 
-    libraryVersionCode = 2
-    libraryVersion = '0.0.2'
+    libraryVersionCode = 3
+    libraryVersion = '0.0.3'
 
     developerId = 'xdtianyu'
     developerName = 'xdtianyu'
