@@ -11,7 +11,7 @@ Grab via gradle
 
 ```
 dependencies {
-    compile 'org.xdty.preference:color-picker:0.0.3'
+    compile 'org.xdty.preference:color-picker:0.0.4'
 }
 ```
 
@@ -21,7 +21,7 @@ or maven
 <dependency>
   <groupId>org.xdty.preference</groupId>
   <artifactId>color-picker</artifactId>
-  <version>0.0.3</version>
+  <version>0.0.4</version>
   <type>aar</type>
 </dependency>
 ```

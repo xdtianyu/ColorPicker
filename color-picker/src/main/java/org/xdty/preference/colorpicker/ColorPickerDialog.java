@@ -121,7 +121,7 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
             .setTitle(mTitleResId)
             .setView(view)
             .create();
-
+        mAlertDialog.setCanceledOnTouchOutside(true);
         return mAlertDialog;
     }
 
