@@ -1,6 +1,7 @@
 # ColorPicker
 An easy to use android color picker library. Based on [android-colorpicker](https://github.com/woalk/android-colorpicker).
 
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-ColorPicker-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/3324)
 [![Build Status](https://travis-ci.org/xdtianyu/ColorPicker.svg?branch=master)](https://travis-ci.org/xdtianyu/ColorPicker)
 [![JAR](https://img.shields.io/maven-central/v/org.xdty.preference/color-picker.svg)](http://central.maven.org/maven2/org/xdty/preference/color-picker/)
 [ ![Download](https://api.bintray.com/packages/xdtianyu/maven/color-picker/images/download.svg) ](https://bintray.com/xdtianyu/maven/color-picker/_latestVersion)
