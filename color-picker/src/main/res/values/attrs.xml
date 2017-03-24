@@ -6,5 +6,7 @@
         <attr name="columns" format="integer" />
         <attr name="material" format="boolean" />
         <attr name="backwardsOrder" format="boolean" />
+        <attr name="strokeWidth" format="integer" />
+        <attr name="strokeColor" format="color" />
     </declare-styleable>
 </resources>

@@ -102,14 +102,15 @@ public class ColorPickerPalette extends TableLayout {
     /**
      * Adds swatches to table in a serpentine format.
      */
-    public void drawPalette(int[] colors, int selectedColor) {
-        drawPalette(colors, selectedColor, null);
+    public void drawPalette(int[] colors, int selectedColor, int width, int strokeColor) {
+        drawPalette(colors, selectedColor, null, width, strokeColor);
     }
 
     /**
      * Adds swatches to table in a serpentine format.
      */
-    public void drawPalette(int[] colors, int selectedColor, String[] colorContentDescriptions) {
+    public void drawPalette(int[] colors, int selectedColor, String[] colorContentDescriptions,
+            int width, int strokeColor) {
         if (colors == null) {
             return;
         }
@@ -122,7 +123,7 @@ public class ColorPickerPalette extends TableLayout {
         // Fills the table with swatches based on the array of colors.
         TableRow row = createTableRow();
         for (int color : colors) {
-            View colorSwatch = createColorSwatch(color, selectedColor);
+            View colorSwatch = createColorSwatch(color, selectedColor, width, strokeColor);
             setSwatchDescription(rowNumber, tableElements, rowElements, color == selectedColor,
                     colorSwatch, colorContentDescriptions);
             addSwatchToRow(row, colorSwatch, rowNumber, mBackwardsOrder);
@@ -195,9 +196,10 @@ public class ColorPickerPalette extends TableLayout {
     /**
      * Creates a color swatch.
      */
-    private ColorPickerSwatch createColorSwatch(int color, int selectedColor) {
+    private ColorPickerSwatch createColorSwatch(int color, int selectedColor, int width,
+            int strokeColor) {
         ColorPickerSwatch view = new ColorPickerSwatch(getContext(), color,
-                color == selectedColor, mOnColorSelectedListener);
+                color == selectedColor, width, strokeColor, mOnColorSelectedListener);
         TableRow.LayoutParams params = new TableRow.LayoutParams(mSwatchLength, mSwatchLength);
         params.setMargins(mMarginSize, mMarginSize, mMarginSize, mMarginSize);
         view.setLayoutParams(params);

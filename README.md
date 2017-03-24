@@ -12,7 +12,7 @@ Grab via gradle
 
 ```
 dependencies {
-    compile 'org.xdty.preference:color-picker:0.0.4'
+    compile 'org.xdty.preference:color-picker:0.0.5'
 }
 ```
 
@@ -22,7 +22,7 @@ or maven
 <dependency>
   <groupId>org.xdty.preference</groupId>
   <artifactId>color-picker</artifactId>
-  <version>0.0.4</version>
+  <version>0.0.5</version>
   <type>aar</type>
 </dependency>
 ```
@@ -34,14 +34,18 @@ or JAR from [maven central](http://central.maven.org/maven2/org/xdty/preference/
 For more details, see [example](https://github.com/xdtianyu/ColorPicker/tree/master/example)
 
 ```
-<org.xdty.preference.ColorPreference
-    android:key="example_color"
-    android:title="Color"
-    android:summary="This is a color preference"
-    tools:dialogTitle="@string/default_color"
-    tools:colors="@array/default_rainbow"
-    tools:columns="5"
-    android:defaultValue="@color/flamingo"/>
+    <org.xdty.preference.ColorPreference
+        android:key="example_color"
+        android:title="Color"
+        android:summary="This is a color preference"
+        tools:dialogTitle="@string/default_color"
+        tools:colors="@array/default_rainbow"
+        tools:columns="5"
+        tools:material="true"
+        tools:backwardsOrder="true"
+        tools:strokeWidth="0"
+        tools:strokeColor="@android:color/black"
+        android:defaultValue="@color/flamingo"/>
 ```
 
 ## ScreenShot

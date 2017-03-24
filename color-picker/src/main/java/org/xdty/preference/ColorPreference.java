@@ -36,6 +36,8 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
     private int mColumns;
     private boolean mMaterial;
     private boolean mBackwardsOrder;
+    private int mStrokeWidth;
+    private int mStrokeColor;
 
     private View mColorView;
 
@@ -57,6 +59,8 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
             mColumns = a.getInt(R.styleable.ColorPreference_columns, 5);
             mMaterial = a.getBoolean(R.styleable.ColorPreference_material, true);
             mBackwardsOrder = a.getBoolean(R.styleable.ColorPreference_backwardsOrder, true);
+            mStrokeWidth = a.getInt(R.styleable.ColorPreference_strokeWidth, 0);
+            mStrokeColor = a.getColor(R.styleable.ColorPreference_strokeColor, 0xff000000);
         } finally {
             a.recycle();
         }
@@ -99,13 +103,14 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
 
     @Override
     protected void onClick() {
-        int[] colors = mColors.length != 0 ? mColors : new int[]{
+        int[] colors = mColors.length != 0 ? mColors : new int[] {
                 Color.BLACK, Color.WHITE, Color
                 .RED, Color.GREEN, Color.BLUE
         };
         ColorPickerDialog d = ColorPickerDialog.newInstance(mTitle,
                 colors, mCurrentValue, mColumns,
-                ColorPickerDialog.SIZE_SMALL, mBackwardsOrder);
+                ColorPickerDialog.SIZE_SMALL, mBackwardsOrder,
+                mStrokeWidth, mStrokeColor);
         d.setOnColorSelectedListener(this);
         d.show(((Activity) getContext()).getFragmentManager(), null);
     }
@@ -139,6 +144,10 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
         myState.current = mCurrentValue;
         myState.colors = mColors;
         myState.columns = mColumns;
+        myState.material = mMaterial;
+        myState.backwardsOrder = mBackwardsOrder;
+        myState.strokeWidth = mStrokeWidth;
+        myState.strokeColor = mStrokeColor;
         return myState;
     }
 
@@ -159,6 +168,10 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
         mCurrentValue = myState.current;
         mColors = myState.colors;
         mColumns = myState.columns;
+        mMaterial = myState.material;
+        mBackwardsOrder = myState.backwardsOrder;
+        mStrokeWidth = myState.strokeWidth;
+        mStrokeColor = myState.strokeColor;
 
         // Update shown color
         updateShownColor();
@@ -202,7 +215,7 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = getContext().getTheme();
         theme.resolveAttribute(attrId, typedValue, true);
-        TypedArray arr = getContext().obtainStyledAttributes(typedValue.data, new int[]{attrId});
+        TypedArray arr = getContext().obtainStyledAttributes(typedValue.data, new int[] { attrId });
         int color = arr.getColor(0, -1);
         arr.recycle();
         return color;
@@ -225,6 +238,10 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
         int current;
         int[] colors;
         int columns;
+        boolean material;
+        boolean backwardsOrder;
+        int strokeWidth;
+        int strokeColor;
 
         public SavedState(Parcelable superState) {
             super(superState);
@@ -236,6 +253,10 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
             current = source.readInt();
             source.readIntArray(colors);
             columns = source.readInt();
+            material = source.readByte() != 0;
+            backwardsOrder = source.readByte() != 0;
+            strokeWidth = source.readInt();
+            strokeColor = source.readInt();
         }
 
         @Override
@@ -245,6 +266,10 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
             dest.writeInt(current);
             dest.writeIntArray(colors);
             dest.writeInt(columns);
+            dest.writeByte((byte) (material ? 1 : 0));
+            dest.writeByte((byte) (backwardsOrder ? 1 : 0));
+            dest.writeInt(strokeWidth);
+            dest.writeInt(strokeColor);
         }
     }
 }

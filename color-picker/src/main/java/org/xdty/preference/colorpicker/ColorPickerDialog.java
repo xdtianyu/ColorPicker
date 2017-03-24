@@ -42,6 +42,8 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
     protected static final String KEY_COLUMNS = "columns";
     protected static final String KEY_SIZE = "size";
     protected static final String KEY_BACKWARDS_ORDER = "backwards_order";
+    protected static final String KEY_STROKE_WIDTH = "stroke_width";
+    protected static final String KEY_STROKE_COLOR = "stroke_color";
     protected AlertDialog mAlertDialog;
     protected int mTitleResId = R.string.color_picker_default_title;
     protected int[] mColors = null;
@@ -49,6 +51,8 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
     protected int mSelectedColor;
     protected int mColumns;
     protected int mSize;
+    protected int mStrokeWidth;
+    protected int mStrokeColor;
     protected boolean mBackwardsOrder;
     protected OnColorSelectedListener mListener;
     private ColorPickerPalette mPalette;
@@ -60,28 +64,37 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
 
     public static ColorPickerDialog newInstance(int titleResId, int[] colors, int selectedColor,
             int columns, int size) {
-        return newInstance(titleResId, colors, selectedColor, columns, size, true);
+        return newInstance(titleResId, colors, selectedColor, columns, size, true, 0, 0);
     }
 
     public static ColorPickerDialog newInstance(int titleResId, int[] colors, int selectedColor,
             int columns, int size, boolean backwardsOrder) {
+        return newInstance(titleResId, colors, selectedColor, columns, size, backwardsOrder, 0, 0);
+    }
+
+    public static ColorPickerDialog newInstance(int titleResId, int[] colors, int selectedColor,
+            int columns, int size, boolean backwardsOrder, int strokeWidth, int strokeColor) {
         ColorPickerDialog ret = new ColorPickerDialog();
-        ret.initialize(titleResId, colors, selectedColor, columns, size, backwardsOrder);
+        ret.initialize(titleResId, colors, selectedColor, columns, size, backwardsOrder,
+                strokeWidth, strokeColor);
         return ret;
     }
 
     public void initialize(int titleResId, int[] colors, int selectedColor, int columns, int size,
-            boolean backwardsDisable) {
-        setArguments(titleResId, columns, size, backwardsDisable);
+            boolean backwardsDisable, int strokeWidth, int strokeColor) {
+        setArguments(titleResId, columns, size, backwardsDisable, strokeWidth, strokeColor);
         setColors(colors, selectedColor);
     }
 
-    public void setArguments(int titleResId, int columns, int size, boolean backwardsOrder) {
+    public void setArguments(int titleResId, int columns, int size, boolean backwardsOrder,
+            int strokeWidth, int strokeColor) {
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_TITLE_ID, titleResId);
         bundle.putInt(KEY_COLUMNS, columns);
         bundle.putInt(KEY_SIZE, size);
         bundle.putBoolean(KEY_BACKWARDS_ORDER, backwardsOrder);
+        bundle.putInt(KEY_STROKE_WIDTH, strokeWidth);
+        bundle.putInt(KEY_STROKE_COLOR, strokeColor);
         setArguments(bundle);
     }
 
@@ -98,13 +111,18 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
             mColumns = getArguments().getInt(KEY_COLUMNS);
             mSize = getArguments().getInt(KEY_SIZE);
             mBackwardsOrder = getArguments().getBoolean(KEY_BACKWARDS_ORDER);
+            mStrokeWidth = getArguments().getInt(KEY_STROKE_WIDTH);
+            mStrokeColor = getArguments().getInt(KEY_STROKE_COLOR);
         }
 
         if (savedInstanceState != null) {
             mColors = savedInstanceState.getIntArray(KEY_COLORS);
-            mSelectedColor = (Integer) savedInstanceState.getSerializable(KEY_SELECTED_COLOR);
+            mSelectedColor = (int) savedInstanceState.getSerializable(KEY_SELECTED_COLOR);
             mColorContentDescriptions = savedInstanceState.getStringArray(
                     KEY_COLOR_CONTENT_DESCRIPTIONS);
+            mBackwardsOrder = savedInstanceState.getBoolean(KEY_BACKWARDS_ORDER);
+            mStrokeWidth = (int) savedInstanceState.getSerializable(KEY_STROKE_WIDTH);
+            mStrokeColor = (int) savedInstanceState.getSerializable(KEY_STROKE_COLOR);
         }
     }
 
@@ -144,7 +162,7 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         if (color != mSelectedColor) {
             mSelectedColor = color;
             // Redraw palette to show checkmark on newly selected color before dismissing.
-            mPalette.drawPalette(mColors, mSelectedColor);
+            mPalette.drawPalette(mColors, mSelectedColor, mStrokeWidth, mStrokeColor);
         }
 
         dismiss();
@@ -182,7 +200,8 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
 
     private void refreshPalette() {
         if (mPalette != null && mColors != null) {
-            mPalette.drawPalette(mColors, mSelectedColor, mColorContentDescriptions);
+            mPalette.drawPalette(mColors, mSelectedColor, mColorContentDescriptions, mStrokeWidth,
+                    mStrokeColor);
         }
     }
 
@@ -208,11 +227,28 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         }
     }
 
+    public void setStrokeWidth(int width) {
+        if (mStrokeWidth != width) {
+            mStrokeWidth = width;
+            refreshPalette();
+        }
+    }
+
+    public void setStrokeColor(int color) {
+        if (mStrokeColor != color) {
+            mStrokeColor = color;
+            refreshPalette();
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putIntArray(KEY_COLORS, mColors);
         outState.putSerializable(KEY_SELECTED_COLOR, mSelectedColor);
         outState.putStringArray(KEY_COLOR_CONTENT_DESCRIPTIONS, mColorContentDescriptions);
+        outState.putBoolean(KEY_BACKWARDS_ORDER, mBackwardsOrder);
+        outState.putInt(KEY_STROKE_WIDTH, mStrokeWidth);
+        outState.putInt(KEY_STROKE_COLOR, mStrokeColor);
     }
 }
