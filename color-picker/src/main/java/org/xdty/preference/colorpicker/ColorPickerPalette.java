@@ -42,6 +42,7 @@ public class ColorPickerPalette extends TableLayout {
     private int mSwatchLength;
     private int mMarginSize;
     private int mNumColumns;
+    private boolean mBackwardsDisable;
 
     public ColorPickerPalette(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -55,8 +56,9 @@ public class ColorPickerPalette extends TableLayout {
      * Initialize the size, columns, and listener.  Size should be a pre-defined size (SIZE_LARGE
      * or SIZE_SMALL) from ColorPickerDialogFragment.
      */
-    public void init(int size, int columns, OnColorSelectedListener listener) {
+    public void init(int size, int columns, OnColorSelectedListener listener, boolean backwardsDisable) {
         mNumColumns = columns;
+        mBackwardsDisable = backwardsDisable;
         Resources res = getResources();
         if (size == ColorPickerDialog.SIZE_LARGE) {
             mSwatchLength = res.getDimensionPixelSize(R.dimen.color_swatch_large);
@@ -105,7 +107,7 @@ public class ColorPickerPalette extends TableLayout {
             View colorSwatch = createColorSwatch(color, selectedColor);
             setSwatchDescription(rowNumber, tableElements, rowElements, color == selectedColor,
                     colorSwatch, colorContentDescriptions);
-            addSwatchToRow(row, colorSwatch, rowNumber);
+            addSwatchToRow(row, colorSwatch, rowNumber, mBackwardsDisable);
 
             tableElements++;
             rowElements++;
@@ -120,7 +122,7 @@ public class ColorPickerPalette extends TableLayout {
         // Create blank views to fill the row if the last row has not been filled.
         if (rowElements > 0) {
             while (rowElements != mNumColumns) {
-                addSwatchToRow(row, createBlankSpace(), rowNumber);
+                addSwatchToRow(row, createBlankSpace(), rowNumber, mBackwardsDisable);
                 rowElements++;
             }
             addView(row);
@@ -131,12 +133,17 @@ public class ColorPickerPalette extends TableLayout {
      * Appends a swatch to the end of the row for even-numbered rows (starting with row 0),
      * to the beginning of a row for odd-numbered rows.
      */
-    private static void addSwatchToRow(TableRow row, View swatch, int rowNumber) {
-        if (rowNumber % 2 == 0) {
+    private static void addSwatchToRow(TableRow row, View swatch, int rowNumber, boolean mBackwardsDisable) {
+        if(!mBackwardsDisable){
+            if (rowNumber % 2 == 0) {
+                row.addView(swatch);
+            } else {
+                row.addView(swatch, 0);
+            }
+        }else{
             row.addView(swatch);
-        } else {
-            row.addView(swatch, 0);
         }
+
     }
 
     /**
@@ -152,15 +159,18 @@ public class ColorPickerPalette extends TableLayout {
             description = contentDescriptions[index];
         } else {
             int accessibilityIndex;
-            if (rowNumber % 2 == 0) {
-                // We're in a regular-ordered row
+            if(!mBackwardsDisable){
+                if (rowNumber % 2 == 0) {
+                    // We're in a regular-ordered row
+                    accessibilityIndex = index + 1;
+                } else {
+                    // We're in a backwards-ordered row.
+                    int rowMax = ((rowNumber + 1) * mNumColumns);
+                    accessibilityIndex = rowMax - rowElements;
+                }
+            }else{
                 accessibilityIndex = index + 1;
-            } else {
-                // We're in a backwards-ordered row.
-                int rowMax = ((rowNumber + 1) * mNumColumns);
-                accessibilityIndex = rowMax - rowElements;
             }
-
             if (selected) {
                 description = String.format(mDescriptionSelected, accessibilityIndex);
             } else {

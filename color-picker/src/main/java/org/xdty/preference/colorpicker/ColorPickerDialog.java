@@ -45,6 +45,7 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
     protected static final String KEY_SELECTED_COLOR = "selected_color";
     protected static final String KEY_COLUMNS = "columns";
     protected static final String KEY_SIZE = "size";
+    protected static final String BACKWARDS_DISABLE = "false";
 
     protected int mTitleResId = R.string.color_picker_default_title;
     protected int[] mColors = null;
@@ -52,6 +53,7 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
     protected int mSelectedColor;
     protected int mColumns;
     protected int mSize;
+    protected boolean mBackwardsDisable;
 
     private ColorPickerPalette mPalette;
     private ProgressBar mProgress;
@@ -63,22 +65,23 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
     }
 
     public static ColorPickerDialog newInstance(int titleResId, int[] colors, int selectedColor,
-            int columns, int size) {
+            int columns, int size, boolean backwardsDisable) {
         ColorPickerDialog ret = new ColorPickerDialog();
-        ret.initialize(titleResId, colors, selectedColor, columns, size);
+        ret.initialize(titleResId, colors, selectedColor, columns, size, backwardsDisable);
         return ret;
     }
 
-    public void initialize(int titleResId, int[] colors, int selectedColor, int columns, int size) {
-        setArguments(titleResId, columns, size);
+    public void initialize(int titleResId, int[] colors, int selectedColor, int columns, int size, Boolean backwardsDisable) {
+        setArguments(titleResId, columns, size, backwardsDisable);
         setColors(colors, selectedColor);
     }
 
-    public void setArguments(int titleResId, int columns, int size) {
+    public void setArguments(int titleResId, int columns, int size, Boolean backwardsDisable) {
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_TITLE_ID, titleResId);
         bundle.putInt(KEY_COLUMNS, columns);
         bundle.putInt(KEY_SIZE, size);
+        bundle.putBoolean(BACKWARDS_DISABLE, backwardsDisable);
         setArguments(bundle);
     }
 
@@ -94,6 +97,7 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
             mTitleResId = getArguments().getInt(KEY_TITLE_ID);
             mColumns = getArguments().getInt(KEY_COLUMNS);
             mSize = getArguments().getInt(KEY_SIZE);
+            mBackwardsDisable = getArguments().getBoolean(BACKWARDS_DISABLE);
         }
 
         if (savedInstanceState != null) {
@@ -111,7 +115,7 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.color_picker_dialog, null);
         mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
         mPalette = (ColorPickerPalette) view.findViewById(R.id.color_picker);
-        mPalette.init(mSize, mColumns, this);
+        mPalette.init(mSize, mColumns, this, mBackwardsDisable);
 
         if (mColors != null) {
             showPaletteView();

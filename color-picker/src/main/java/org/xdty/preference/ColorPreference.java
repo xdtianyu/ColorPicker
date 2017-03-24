@@ -103,7 +103,7 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
         };
         ColorPickerDialog d = ColorPickerDialog.newInstance(mTitle,
                 colors, mCurrentValue, mColumns,
-                ColorPickerDialog.SIZE_SMALL);
+                ColorPickerDialog.SIZE_SMALL, false);
         d.setOnColorSelectedListener(this);
         d.show(((Activity) getContext()).getFragmentManager(), null);
     }
