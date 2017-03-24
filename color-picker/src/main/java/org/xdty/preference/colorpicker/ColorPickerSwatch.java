@@ -58,8 +58,6 @@ public class ColorPickerSwatch extends FrameLayout implements View.OnClickListen
     }
 
     protected void setColor(int color) {
-         Drawable[] colorDrawable = new Drawable[]
-                 {getContext().getResources().getDrawable(R.drawable.color_picker_swatch)};
          mSwatchImage.setImageDrawable(new ColorStateDrawable(colorDrawable, color));
          GradientDrawable colorDrawable;
  
