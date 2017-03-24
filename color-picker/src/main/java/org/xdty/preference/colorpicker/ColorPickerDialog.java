@@ -27,7 +27,6 @@ import android.widget.ProgressBar;
 
 import org.xdty.preference.colorpicker.ColorPickerSwatch.OnColorSelectedListener;
 
-
 /**
  * A dialog which takes in as input an array of colors and creates a palette allowing the user to
  * select a specific color swatch, which invokes a listener.
@@ -36,52 +35,53 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
 
     public static final int SIZE_LARGE = 1;
     public static final int SIZE_SMALL = 2;
-
-    protected AlertDialog mAlertDialog;
-
     protected static final String KEY_TITLE_ID = "title_id";
     protected static final String KEY_COLORS = "colors";
     protected static final String KEY_COLOR_CONTENT_DESCRIPTIONS = "color_content_descriptions";
     protected static final String KEY_SELECTED_COLOR = "selected_color";
     protected static final String KEY_COLUMNS = "columns";
     protected static final String KEY_SIZE = "size";
-    protected static final String BACKWARDS_DISABLE = "false";
-
+    protected static final String KEY_BACKWARDS_ORDER = "backwards_order";
+    protected AlertDialog mAlertDialog;
     protected int mTitleResId = R.string.color_picker_default_title;
     protected int[] mColors = null;
     protected String[] mColorContentDescriptions = null;
     protected int mSelectedColor;
     protected int mColumns;
     protected int mSize;
-    protected boolean mBackwardsDisable;
-
+    protected boolean mBackwardsOrder;
+    protected OnColorSelectedListener mListener;
     private ColorPickerPalette mPalette;
     private ProgressBar mProgress;
-
-    protected OnColorSelectedListener mListener;
 
     public ColorPickerDialog() {
         // Empty constructor required for dialog fragments.
     }
 
     public static ColorPickerDialog newInstance(int titleResId, int[] colors, int selectedColor,
-            int columns, int size, boolean backwardsDisable) {
+            int columns, int size) {
+        return newInstance(titleResId, colors, selectedColor, columns, size, true);
+    }
+
+    public static ColorPickerDialog newInstance(int titleResId, int[] colors, int selectedColor,
+            int columns, int size, boolean backwardsOrder) {
         ColorPickerDialog ret = new ColorPickerDialog();
-        ret.initialize(titleResId, colors, selectedColor, columns, size, backwardsDisable);
+        ret.initialize(titleResId, colors, selectedColor, columns, size, backwardsOrder);
         return ret;
     }
 
-    public void initialize(int titleResId, int[] colors, int selectedColor, int columns, int size, Boolean backwardsDisable) {
+    public void initialize(int titleResId, int[] colors, int selectedColor, int columns, int size,
+            boolean backwardsDisable) {
         setArguments(titleResId, columns, size, backwardsDisable);
         setColors(colors, selectedColor);
     }
 
-    public void setArguments(int titleResId, int columns, int size, Boolean backwardsDisable) {
+    public void setArguments(int titleResId, int columns, int size, boolean backwardsOrder) {
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_TITLE_ID, titleResId);
         bundle.putInt(KEY_COLUMNS, columns);
         bundle.putInt(KEY_SIZE, size);
-        bundle.putBoolean(BACKWARDS_DISABLE, backwardsDisable);
+        bundle.putBoolean(KEY_BACKWARDS_ORDER, backwardsOrder);
         setArguments(bundle);
     }
 
@@ -97,7 +97,7 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
             mTitleResId = getArguments().getInt(KEY_TITLE_ID);
             mColumns = getArguments().getInt(KEY_COLUMNS);
             mSize = getArguments().getInt(KEY_SIZE);
-            mBackwardsDisable = getArguments().getBoolean(BACKWARDS_DISABLE);
+            mBackwardsOrder = getArguments().getBoolean(KEY_BACKWARDS_ORDER);
         }
 
         if (savedInstanceState != null) {
@@ -115,16 +115,16 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.color_picker_dialog, null);
         mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
         mPalette = (ColorPickerPalette) view.findViewById(R.id.color_picker);
-        mPalette.init(mSize, mColumns, this, mBackwardsDisable);
+        mPalette.init(mSize, mColumns, this, mBackwardsOrder);
 
         if (mColors != null) {
             showPaletteView();
         }
 
         mAlertDialog = new AlertDialog.Builder(activity)
-            .setTitle(mTitleResId)
-            .setView(view)
-            .create();
+                .setTitle(mTitleResId)
+                .setView(view)
+                .create();
         mAlertDialog.setCanceledOnTouchOutside(true);
         return mAlertDialog;
     }
@@ -173,20 +173,6 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         }
     }
 
-    public void setColors(int[] colors) {
-        if (mColors != colors) {
-            mColors = colors;
-            refreshPalette();
-        }
-    }
-
-    public void setSelectedColor(int color) {
-        if (mSelectedColor != color) {
-            mSelectedColor = color;
-            refreshPalette();
-        }
-    }
-
     public void setColorContentDescriptions(String[] colorContentDescriptions) {
         if (mColorContentDescriptions != colorContentDescriptions) {
             mColorContentDescriptions = colorContentDescriptions;
@@ -204,8 +190,22 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         return mColors;
     }
 
+    public void setColors(int[] colors) {
+        if (mColors != colors) {
+            mColors = colors;
+            refreshPalette();
+        }
+    }
+
     public int getSelectedColor() {
         return mSelectedColor;
+    }
+
+    public void setSelectedColor(int color) {
+        if (mSelectedColor != color) {
+            mSelectedColor = color;
+            refreshPalette();
+        }
     }
 
     @Override

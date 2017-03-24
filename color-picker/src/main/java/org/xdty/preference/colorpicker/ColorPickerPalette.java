@@ -27,7 +27,6 @@ import android.widget.TableRow;
 
 import org.xdty.preference.colorpicker.ColorPickerSwatch.OnColorSelectedListener;
 
-
 /**
  * A color picker custom view which creates an grid of color squares.  The number of squares per
  * row (and the padding between the squares) is determined by the user.
@@ -42,7 +41,7 @@ public class ColorPickerPalette extends TableLayout {
     private int mSwatchLength;
     private int mMarginSize;
     private int mNumColumns;
-    private boolean mBackwardsDisable;
+    private boolean mBackwardsOrder;
 
     public ColorPickerPalette(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -53,12 +52,31 @@ public class ColorPickerPalette extends TableLayout {
     }
 
     /**
+     * Appends a swatch to the end of the row for even-numbered rows (starting with row 0),
+     * to the beginning of a row for odd-numbered rows.
+     */
+    private static void addSwatchToRow(TableRow row, View swatch, int rowNumber,
+            boolean backwardsOrder) {
+        if (backwardsOrder) {
+            if (rowNumber % 2 == 0) {
+                row.addView(swatch);
+            } else {
+                row.addView(swatch, 0);
+            }
+        } else {
+            row.addView(swatch);
+        }
+
+    }
+
+    /**
      * Initialize the size, columns, and listener.  Size should be a pre-defined size (SIZE_LARGE
      * or SIZE_SMALL) from ColorPickerDialogFragment.
      */
-    public void init(int size, int columns, OnColorSelectedListener listener, boolean backwardsDisable) {
+    public void init(int size, int columns, OnColorSelectedListener listener,
+            boolean backwardsOrder) {
         mNumColumns = columns;
-        mBackwardsDisable = backwardsDisable;
+        mBackwardsOrder = backwardsOrder;
         Resources res = getResources();
         if (size == ColorPickerDialog.SIZE_LARGE) {
             mSwatchLength = res.getDimensionPixelSize(R.dimen.color_swatch_large);
@@ -107,7 +125,7 @@ public class ColorPickerPalette extends TableLayout {
             View colorSwatch = createColorSwatch(color, selectedColor);
             setSwatchDescription(rowNumber, tableElements, rowElements, color == selectedColor,
                     colorSwatch, colorContentDescriptions);
-            addSwatchToRow(row, colorSwatch, rowNumber, mBackwardsDisable);
+            addSwatchToRow(row, colorSwatch, rowNumber, mBackwardsOrder);
 
             tableElements++;
             rowElements++;
@@ -122,28 +140,11 @@ public class ColorPickerPalette extends TableLayout {
         // Create blank views to fill the row if the last row has not been filled.
         if (rowElements > 0) {
             while (rowElements != mNumColumns) {
-                addSwatchToRow(row, createBlankSpace(), rowNumber, mBackwardsDisable);
+                addSwatchToRow(row, createBlankSpace(), rowNumber, mBackwardsOrder);
                 rowElements++;
             }
             addView(row);
         }
-    }
-
-    /**
-     * Appends a swatch to the end of the row for even-numbered rows (starting with row 0),
-     * to the beginning of a row for odd-numbered rows.
-     */
-    private static void addSwatchToRow(TableRow row, View swatch, int rowNumber, boolean mBackwardsDisable) {
-        if(!mBackwardsDisable){
-            if (rowNumber % 2 == 0) {
-                row.addView(swatch);
-            } else {
-                row.addView(swatch, 0);
-            }
-        }else{
-            row.addView(swatch);
-        }
-
     }
 
     /**
@@ -159,7 +160,7 @@ public class ColorPickerPalette extends TableLayout {
             description = contentDescriptions[index];
         } else {
             int accessibilityIndex;
-            if(!mBackwardsDisable){
+            if (mBackwardsOrder) {
                 if (rowNumber % 2 == 0) {
                     // We're in a regular-ordered row
                     accessibilityIndex = index + 1;
@@ -168,7 +169,7 @@ public class ColorPickerPalette extends TableLayout {
                     int rowMax = ((rowNumber + 1) * mNumColumns);
                     accessibilityIndex = rowMax - rowElements;
                 }
-            }else{
+            } else {
                 accessibilityIndex = index + 1;
             }
             if (selected) {

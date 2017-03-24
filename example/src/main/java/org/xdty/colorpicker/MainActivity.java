@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
                 mSelectedColor,
                 5, // Number of columns
                 ColorPickerDialog.SIZE_SMALL,
-                false); //True or False to enable or disable the serpentine effect
+                true); //True or False to enable or disable the serpentine effect
 
         dialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
 

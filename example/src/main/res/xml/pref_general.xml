@@ -14,5 +14,6 @@
         tools:colors="@array/default_rainbow"
         tools:columns="5"
         tools:material="true"
+        tools:backwardsOrder="true"
         android:defaultValue="@color/flamingo"/>
 </PreferenceScreen>

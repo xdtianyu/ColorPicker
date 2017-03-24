@@ -35,6 +35,7 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
     private int[] mColors;
     private int mColumns;
     private boolean mMaterial;
+    private boolean mBackwardsOrder;
 
     private View mColorView;
 
@@ -55,6 +56,7 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
             }
             mColumns = a.getInt(R.styleable.ColorPreference_columns, 5);
             mMaterial = a.getBoolean(R.styleable.ColorPreference_material, true);
+            mBackwardsOrder = a.getBoolean(R.styleable.ColorPreference_backwardsOrder, true);
         } finally {
             a.recycle();
         }
@@ -103,7 +105,7 @@ public class ColorPreference extends Preference implements ColorPickerSwatch
         };
         ColorPickerDialog d = ColorPickerDialog.newInstance(mTitle,
                 colors, mCurrentValue, mColumns,
-                ColorPickerDialog.SIZE_SMALL, false);
+                ColorPickerDialog.SIZE_SMALL, mBackwardsOrder);
         d.setOnColorSelectedListener(this);
         d.show(((Activity) getContext()).getFragmentManager(), null);
     }
